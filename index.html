@@ -491,7 +491,7 @@ function togglePause(){if(state=='title'||state=='lobby')return;paused=!paused;$
 $('pause').onclick=e=>{e.stopPropagation();togglePause()};window.musicPaused=()=>paused||state=='title';
 $('help').onclick=e=>{e.stopPropagation();const wasP=paused;if(!paused&&state=='play')togglePause();panel(`<h2>🐮 Mama MacGregor's Slots</h2><p>A cozy Scottish-farm slot machine game played with <b>pretend coins only</b>. There is nothing to buy, ever — if you run low, Mama gives you a free refill.</p>
 <h3>How to play</h3><p>• Set your bet with <b>−</b> / <b>+</b> (coins per line × lines).<br>• Tap <b>SPIN</b>. Tap the reels or STOP to slam them to a stop.<br>• Match 3, 4 or 5 pictures from the left along a payline to win. 📜 Paytable shows every prize.<br>• <b>Mama</b> is wild. <b>3 Castle Bells</b> anywhere = free spins. <b>3 Bonus</b> symbols on reels 1, 3, 5 = pick-a-prize bonus.<br>• Two bells landed? Watch the last reels slow down… 🔔</p>
-<h3>Levels</h3><p>Every spin earns XP. Level up for a coin gift and to unlock new machines: <b>Donkey Cart Derby</b> (level 4) and <b>Castle on the Hill</b> with sticky wilds (level 8).</p><h3>Controls</h3><p>Space = spin/stop · P = pause · M = mute</p>`,()=>{if(!wasP&&paused)togglePause()})};
+<h3>Levels</h3><p>Every spin earns XP. Level up for a coin gift and to unlock new machines: <b>Donkey Cart Derby</b> (level 4) and <b>Castle on the Hill</b> with sticky wilds (level 8).</p><h3>Controls</h3><p>Space = spin/stop · P = pause · M = mute</p><h3 class="gp-help">🎮 Controller</h3><p class="gp-help">D-pad to pick a button, A to press it, X to spin or stop the reels, Start pause, Select mute, B to go back.</p>`,()=>{if(!wasP&&paused)togglePause()})};
 // ---------- loop
 let lastT=0;function frame(now){requestAnimationFrame(frame);const dt=Math.min(.05,(now-lastT)/1000||0);lastT=now;if(!paused&&!panelOpen)update(dt);else{if(msg)msg.t+=0}render()}
 resizeCanvas();chrome(true);requestAnimationFrame(t=>{lastT=t;frame(t)});
@@ -753,4 +753,21 @@ window.PALB=api})();
 #palbList li{min-height:30px;height:auto!important;font-size:16px!important}
 .tb{width:46px!important;height:46px!important}#mute{right:55px!important}#help{right:104px!important}
 </style>
+<!-- gamepad:start -->
+<script src="gamepad.js?v=1"></script>
+<script>
+(function(){if(typeof btn==='function'){var _b=btn;btn=function(x,y,w,h,label){var n=menuBtns.length,r=_b.apply(this,arguments);if(menuBtns.length>n&&typeof label==='string')menuBtns[menuBtns.length-1].label=label;return r}}})();
+GamepadSupport.init({
+ keys:{start:'KeyP',back:'KeyM',x:'Space'},
+ menuKeys:{a:'Enter'},
+ noRepeat:['a','b','x','y','lb','rb','start','back'],
+ ignoreSel:'#dock,#mute,#pause,#help,#inst,#ios,.tb,#dockHint',
+ backSel:'#pclose',
+ menu:function(){var ov=!!document.querySelector('#palbOv.on,#smpLock.on');return ov||panelOpen||paused||true;},
+ cursor:function(){return !document.querySelector('#palbOv.on,#smpLock.on')&&!panelOpen&&!paused&&(false);},
+ items:GamepadSupport.list(function(){return (document.querySelector('#palbOv.on,#smpLock.on')||panelOpen)?[]:menuBtns;},{scale:function(){return SC},origin:function(){return [OXs,OYs]}}),
+ back:function(){if(document.querySelector('#palbOv.on,#smpLock.on')||panelOpen)return false;var b=menuBtns.filter(function(x){return /^\W*(back|close|menu|done|✕|×)\W*$/i.test(x.label||'')})[0];if(b){b.fn();return true}return false;}
+});
+</script>
+<!-- gamepad:end -->
 </body></html>
